@@ -3,33 +3,34 @@ import express from 'express';
 import path, { join } from 'path';
 import { readdir } from 'fs';
 
-import "../bootstrap/app.js"
-import constants from '../bootstrap/constants.js';
 import exampleModelApi from "./exampleApi.js";
 
-const router = Router();
+export default (function () {
 
-/** Usado para servir json */
-router.use(express.json());
+    const router = Router();
 
-/** Servir o public estaticamente, tanto para arquivos como para os assets de frontend */
-router.use(express.static(path.join(CONSTANTS.DIR, 'public')));
+    /** Usado para servir json */
+    router.use(express.json());
 
-// Rota para listar arquivos na pasta 'public'
-// NÃO É NECESSÁRIO CASO TENHA A CAMADA DE NGINX
-router.get('/', (req, res) => {
-    const dirPath = join(constants.DIR, 'public');
+    /** Servir o public estaticamente, tanto para arquivos como para os assets de frontend */
+    // NÃO SERÁ CHAMADO CASO TENHA A CAMADA DE NGINX COM ARQUIVOS ESTÁTICOS
+    router.use(express.static(path.join(CONSTANTS.DIR, 'public')));
 
-    readdir(dirPath, (err, files) => {
-        if (err) {
-            return res.status(CONSTANTS.HTTP.SERVER_ERROR).send('Erro ao ler o diretório');
-        }
+    // Rota para listar arquivos na pasta 'public'
+    // NÃO SERÁ CHAMADO CASO TENHA A CAMADA DE NGINX COM ARQUIVOS ESTÁTICOS
+    router.get('/', (req, res) => {
+        const dirPath = join(CONSTANTS.DIR, 'public');
 
-        const fileList = files.map(file => {
-            return `<li><a href="/${file}">${file}</a></li>`;
-        }).join('');
+        readdir(dirPath, (err, files) => {
+            if (err) {
+                return res.status(CONSTANTS.HTTP.SERVER_ERROR).send('Erro ao ler o diretório');
+            }
 
-        res.send(`
+            const fileList = files.map(file => {
+                return `<li><a href="/${file}">${file}</a></li>`;
+            }).join('');
+
+            res.send(`
             <html>
                 <head><title>Lista de Arquivos</title></head>
                 <body>
@@ -38,17 +39,17 @@ router.get('/', (req, res) => {
                 </body>
             </html>
         `);
+        });
     });
-});
 
+    // example model routes
+    router.use('/', exampleModelApi);
 
-// example model routes
-router.use('/', exampleModelApi);
+    /** Se nenhuma rota for encontrada, 404 neles! */
+    router.use((req, res) => {
+        res.status(CONSTANTS.HTTP.NOT_FOUND).send('Not found');
+    });
 
-/** Se a rota não for encontrada, 404 neles! */
-router.use((req, res) => {
-    res.status(CONSTANTS.HTTP.NOT_FOUND).send('Not found');
-});
+    return router;
 
-
-export default router;
+})();

@@ -1,8 +1,8 @@
 import express from 'express';
 import chalk from 'chalk';
 
+import "./bootstrap/app.js"
 import webRoutes from "./routes/web.js";
-
 
 /** Iniciar roteador */
 const app = express();
