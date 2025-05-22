@@ -13,6 +13,10 @@ export default async (request, response) => {
         }
    */
 
+    /**
+        nesse caso, esperamos http://dominio/path?lmit=x&offset=y
+     */
+
     const limit = parseInt(request.query.limit) || 100;
     const offset = parseInt(request.query.offset) || 0;
 

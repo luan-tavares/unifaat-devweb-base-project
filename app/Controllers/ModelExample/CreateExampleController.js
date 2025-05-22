@@ -4,6 +4,9 @@ export default async (request, response) => {
 
     const HTTP_STATUS = CONSTANTS.HTTP;
 
+    /**
+      POST, PUT podem ter request body!
+     */
     const requestBody = request.body;
 
     const nome = requestBody.nome || null;
