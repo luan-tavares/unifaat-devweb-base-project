@@ -4,6 +4,15 @@ export default async (request, response) => {
 
     const HTTP_STATUS = CONSTANTS.HTTP;
 
+    /**
+        Query vars em http://dominio/path?var1=1&var2=teste
+
+        request.query = {
+            var1 : 1, 
+            var2: "teste"
+        }
+   */
+
     const limit = parseInt(request.query.limit) || 100;
     const offset = parseInt(request.query.offset) || 0;
 
@@ -12,6 +21,8 @@ export default async (request, response) => {
     }
 
     try {
+
+        // Lembrem-se do algoritmo de paginação limit + 1
 
         const data = await ExampleModel.findAll({
             limit: limit + 1,
