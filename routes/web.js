@@ -3,6 +3,7 @@ import express from 'express';
 import path, { join } from 'path';
 import { readdir } from 'fs';
 
+import "../bootstrap/app.js"
 import constants from '../bootstrap/constants.js';
 import exampleModelApi from "./exampleApi.js";
 
@@ -12,7 +13,7 @@ const router = Router();
 router.use(express.json());
 
 /** Servir o public estaticamente, tanto para arquivos como para os assets de frontend */
-router.use(express.static(path.join(constants.DIR, 'public')));
+router.use(express.static(path.join(CONSTANTS.DIR, 'public')));
 
 // Rota para listar arquivos na pasta 'public'
 // NÃO É NECESSÁRIO CASO TENHA A CAMADA DE NGINX
