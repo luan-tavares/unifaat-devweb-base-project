@@ -1,4 +1,4 @@
-# Aula 11 - Models
+# Unifaat :: Devweb :: Projeto - Base
 
 ## Instalação e Execução
 
@@ -7,13 +7,13 @@
 1. Clonar o repositório:
 
    ```sh
-   git clone https://github.com/luan-tavares/unifaat-devweb-aula-11-models
+   git clone https://github.com/luan-tavares/unifaat-devweb-base-project
    ```
 
 2. Entrar na pasta do projeto:
 
    ```sh
-   cd unifaat-devweb-aula-11-models
+   cd unifaat-devweb-base-project
    ```
 
 3. Criar o arquivo `.env` na raiz do projeto copiando o .env.example:
