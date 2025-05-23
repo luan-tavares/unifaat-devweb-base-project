@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import express from 'express';
-import path, { join } from 'path';
-import { readdir } from 'fs';
+import path from 'path';
 
 import exampleModelApi from "./exampleApi.js";
+import ListPublicFilesController from '../app/Controllers/ListPublicFilesController.js';
 
 export default (function () {
 
@@ -18,29 +18,7 @@ export default (function () {
 
     // Rota para listar arquivos na pasta 'public'
     // NÃO SERÁ CHAMADO CASO TENHA A CAMADA DE NGINX COM ARQUIVOS ESTÁTICOS
-    router.get('/', (req, res) => {
-        const dirPath = join(CONSTANTS.DIR, 'public');
-
-        readdir(dirPath, (err, files) => {
-            if (err) {
-                return res.status(CONSTANTS.HTTP.SERVER_ERROR).send('Erro ao ler o diretório');
-            }
-
-            const fileList = files.map(file => {
-                return `<li><a href="/${file}">${file}</a></li>`;
-            }).join('');
-
-            res.send(`
-            <html>
-                <head><title>Lista de Arquivos</title></head>
-                <body>
-                    <h2>Lista de Arquivos</h2>
-                    <ul>${fileList}</ul>
-                </body>
-            </html>
-        `);
-        });
-    });
+    router.get('/', ListPublicFilesController);
 
     // example model routes
     router.use('/', exampleModelApi);

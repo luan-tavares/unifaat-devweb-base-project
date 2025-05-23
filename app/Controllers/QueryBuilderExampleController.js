@@ -1,77 +1,96 @@
 import db from "../../config/db.js";
 
 export default (function () {
+    const TABLE = "tabela_exemplo";
+
+    const HTTP_STATUS = CONSTANTS.HTTP;
+
     return {
 
-        // GET /todos
-        'list': async (req, res) => {
+        // GET /exemplo
+        list: async (request, response) => {
             try {
-                const result = await db.query('SELECT * FROM todos ORDER BY id');
-                return res.status(200).json({
-                    rows: result.rows
-                });
+                const result = await db.query(`SELECT * FROM ${TABLE} ORDER BY id`);
+                return response.status(HTTP_STATUS.SUCCESS).json({ rows: result.rows });
             } catch (err) {
-                return res.status(500).json({ error: 'Erro ao listar tarefas.' });
+                console.error(err);
+                return response.status(HTTP_STATUS.SERVER_ERROR).json({ error: 'Erro ao listar registros.' });
             }
         },
 
-        // GET /todos/:id
-        'get': async (req, res) => {
-            const { id } = req.params;
+        // GET /exemplo/:id
+        get: async (request, response) => {
+            const { id } = request.params;
             try {
-                const result = await db.query('SELECT * FROM todos WHERE id = $1', [id]);
+                const result = await db.query(`SELECT * FROM ${TABLE} WHERE id = $1`, [id]);
                 if (result.rowCount === 0) {
-                    return res.status(404).json({ error: 'Tarefa não encontrada.' });
+                    return response.status(HTTP_STATUS.NOT_FOUND).json({ error: 'Registro não encontrado.' });
                 }
-                return res.status(200).json(result.rows[0]);
+                return response.status(HTTP_STATUS.SUCCESS).json(result.rows[0]);
             } catch (err) {
-                return res.status(500).json({ error: 'Erro ao buscar tarefa.' });
+                console.error(err);
+                return response.status(HTTP_STATUS.SERVER_ERROR).json({ error: 'Erro ao buscar registro.' });
             }
         },
 
-        // POST /todos
-        'insert': async (req, res) => {
-            const { title, is_checked } = req.body;
+        // POST /exemplo
+        insert: async (request, response) => {
+            const { nome, esta_ativo = false } = request.body;
+            if (!nome) {
+                return response.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Campo "nome" é obrigatório.' });
+            }
+
             try {
                 const result = await db.query(
-                    'INSERT INTO todos (title, is_checked) VALUES ($1, $2) RETURNING *',
-                    [title, is_checked ?? false]
+                    `INSERT INTO ${TABLE} (nome, esta_ativo) VALUES ($1, $2) RETURNING *`,
+                    [nome, esta_ativo]
                 );
-                return res.status(201).json(result.rows[0]);
+                return response.status(HTTP_STATUS.SUCCESS_CREATED).json(result.rows[0]);
             } catch (err) {
-                return res.status(500).json({ error: 'Erro ao inserir tarefa.' });
+                console.error(err);
+                return response.status(HTTP_STATUS.SERVER_ERROR).json({ error: 'Erro ao inserir registro.' });
             }
         },
 
-        // PUT /todos/:id
-        'update': async (req, res) => {
-            const { id } = req.params;
-            const { title, is_checked } = req.body;
+        // PUT /exemplo/:id
+        update: async (request, response) => {
+            const { id } = request.params;
+            const { nome, esta_ativo } = request.body;
+
+            if (!nome) {
+                return response.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'Campo "nome" é obrigatório.' });
+            }
+
             try {
                 const result = await db.query(
-                    'UPDATE todos SET title = $1, is_checked = $2 WHERE id = $3 RETURNING *',
-                    [title, is_checked, id]
+                    `UPDATE ${TABLE} SET nome = $1, esta_ativo = $2 WHERE id = $3 RETURNING *`,
+                    [nome, esta_ativo, id]
                 );
                 if (result.rowCount === 0) {
-                    return res.status(404).json({ error: 'Tarefa não encontrada para atualização.' });
+                    return response.status(HTTP_STATUS.NOT_FOUND).json({ error: 'Registro não encontrado para atualização.' });
                 }
-                return res.status(200).json(result.rows[0]);
+                return response.status(HTTP_STATUS.SUCCESS).json(result.rows[0]);
             } catch (err) {
-                return res.status(500).json({ error: 'Erro ao atualizar tarefa.' });
+                console.error(err);
+                return response.status(HTTP_STATUS.SERVER_ERROR).json({ error: 'Erro ao atualizar registro.' });
             }
         },
 
-        // DELETE /todos/:id
-        'delete': async (req, res) => {
-            const { id } = req.params;
+        // DELETE /exemplo/:id
+        delete: async (request, response) => {
+            const { id } = request.params;
             try {
-                const result = await db.query('DELETE FROM todos WHERE id = $1 RETURNING *', [id]);
+                const result = await db.query(
+                    `DELETE FROM ${TABLE} WHERE id = $1 RETURNING *`,
+                    [id]
+                );
                 if (result.rowCount === 0) {
-                    return res.status(404).json({ error: 'Tarefa não encontrada para exclusão.' });
+                    return response.status(HTTP_STATUS.NOT_FOUND).json({ error: 'Registro não encontrado para exclusão.' });
                 }
-                return res.status(200).json({ message: 'Tarefa excluída com sucesso.', deleted: result.rows[0] });
+                return response.status(HTTP_STATUS.SUCCESS_NO_CONTENT).send();
             } catch (err) {
-                return res.status(500).json({ error: 'Erro ao excluir tarefa.' });
+                console.error(err);
+                return response.status(HTTP_STATUS.SERVER_ERROR).json({ error: 'Erro ao excluir registro.' });
             }
         },
 

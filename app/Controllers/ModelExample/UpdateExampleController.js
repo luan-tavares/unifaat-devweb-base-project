@@ -35,6 +35,9 @@ export default async (request, response) => {
 
     try {
 
+        //Update retorna um array onde o primeiro item é quantas linhas foram alteradas e a segunda é um outro array com essas colunas
+        //Claro que neste caso será apenas uma coluna
+
         const [rowsAffected, [row]] = await ExampleModel.update(
             {
                 nome: nome, esta_ativo: esta_ativo

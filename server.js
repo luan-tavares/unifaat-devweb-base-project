@@ -8,7 +8,9 @@ import webRoutes from "./routes/web.js";
 const app = express();
 
 /** Inicializar rotas  */
-app.use("/", webRoutes)
+app.use("/", webRoutes);
+
+console.log(process.env.IS_CONTAINER);
 
 /** Escolher as portas baseado se foi inicializado com ou sem nginx */
 const webPort = process.env.PORT || 3000;

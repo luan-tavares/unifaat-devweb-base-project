@@ -12,6 +12,7 @@ services:
     restart: unless-stopped
     environment:
       - NODE_PORT=3000
+      - IS_CONTAINER=TRUE
     expose:
       - ${NODE_PORT}
     networks:

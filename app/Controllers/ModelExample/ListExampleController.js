@@ -36,6 +36,8 @@ export default async (request, response) => {
 
         const hasMore = (data.length > limit);
 
+        // .slice para remover o último elemento de limit + 1, ficando somente limit
+
         const rows = (hasMore) ? (data.slice(0, limit)) : (data);
         const next = (hasMore) ? (offset + limit) : (null);
 
